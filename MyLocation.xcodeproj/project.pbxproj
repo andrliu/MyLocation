@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		491243691A4E8122002FBF52 /* LocationDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491243681A4E8122002FBF52 /* LocationDetailsViewController.swift */; };
 		496BCB501A4AA8BF0004DB05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496BCB4F1A4AA8BF0004DB05 /* AppDelegate.swift */; };
 		496BCB521A4AA8BF0004DB05 /* CurrentLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496BCB511A4AA8BF0004DB05 /* CurrentLocationViewController.swift */; };
 		496BCB541A4AA8BF0004DB05 /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496BCB531A4AA8BF0004DB05 /* SecondViewController.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		491243681A4E8122002FBF52 /* LocationDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewController.swift; sourceTree = "<group>"; };
 		496BCB4A1A4AA8BF0004DB05 /* MyLocation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyLocation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		496BCB4E1A4AA8BF0004DB05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		496BCB4F1A4AA8BF0004DB05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 			children = (
 				496BCB4F1A4AA8BF0004DB05 /* AppDelegate.swift */,
 				496BCB511A4AA8BF0004DB05 /* CurrentLocationViewController.swift */,
+				491243681A4E8122002FBF52 /* LocationDetailsViewController.swift */,
 				496BCB531A4AA8BF0004DB05 /* SecondViewController.swift */,
 				496BCB551A4AA8BF0004DB05 /* Main.storyboard */,
 				496BCB581A4AA8BF0004DB05 /* Images.xcassets */,
@@ -215,6 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				491243691A4E8122002FBF52 /* LocationDetailsViewController.swift in Sources */,
 				496BCB541A4AA8BF0004DB05 /* SecondViewController.swift in Sources */,
 				496BCB501A4AA8BF0004DB05 /* AppDelegate.swift in Sources */,
 				496BCB521A4AA8BF0004DB05 /* CurrentLocationViewController.swift in Sources */,
@@ -409,6 +413,7 @@
 				496BCB6D1A4AA8BF0004DB05 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		496BCB6E1A4AA8BF0004DB05 /* Build configuration list for PBXNativeTarget "MyLocationTests" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +422,7 @@
 				496BCB701A4AA8BF0004DB05 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
