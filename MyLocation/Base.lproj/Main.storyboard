@@ -33,7 +33,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Nyx-N2-I9K" kind="modal" id="CCt-n1-8zn"/>
+                                    <segue destination="Nyx-N2-I9K" kind="modal" identifier="TagLocation" id="CCt-n1-8zn"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ES3-pj-bKc">
@@ -262,6 +262,14 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="addressLabel" destination="Yld-oR-j0M" id="XFk-T2-86B"/>
+                        <outlet property="categoryLabel" destination="GWB-qO-dXa" id="XRI-oX-Un4"/>
+                        <outlet property="dateLabel" destination="yGq-0U-Nye" id="fwP-f6-Ge9"/>
+                        <outlet property="descriptionTextView" destination="SlZ-P9-WLZ" id="0uw-27-FAC"/>
+                        <outlet property="latitudeLabel" destination="S79-K2-j9d" id="eBQ-hR-lzK"/>
+                        <outlet property="longitudeLabel" destination="zru-9G-6Wb" id="o4R-Vy-gLl"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d9w-YE-acb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
