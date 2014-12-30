@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import Dispatch
 
 private let dateFormatter: NSDateFormatter =
 {
@@ -17,7 +18,7 @@ private let dateFormatter: NSDateFormatter =
     return formatter
 }()
 
-class LocationDetailsViewController: UITableViewController
+class LocationDetailsViewController: UITableViewController, UITextViewDelegate
 {
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var categoryLabel: UILabel!
@@ -27,10 +28,18 @@ class LocationDetailsViewController: UITableViewController
     @IBOutlet weak var dateLabel: UILabel!
     var coordinate = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var placemark: CLPlacemark?
+    var descriptionText = ""
+    var categoryName = "No Category"
     
     @IBAction func done()
     {
-        dismissViewControllerAnimated(true, completion: nil)
+        let hudView = HudView.hudInView(navigationController!.view, animated: true)
+        hudView.text = "Tagged"
+        let delayInSeconds = 0.6
+        let when = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
+        dispatch_after(when, dispatch_get_main_queue(), {
+            self.dismissViewControllerAnimated(true, completion: nil)
+        })
     }
     
     @IBAction func cancel()
@@ -41,8 +50,8 @@ class LocationDetailsViewController: UITableViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        descriptionTextView.text = ""
-        categoryLabel.text = ""
+        descriptionTextView.text = descriptionText
+        categoryLabel.text = categoryName
         latitudeLabel.text = String(format: "%.8f", coordinate.latitude)
         longitudeLabel.text = String(format: "%.8f", coordinate.longitude)
         if let placemark = placemark
@@ -54,6 +63,66 @@ class LocationDetailsViewController: UITableViewController
             addressLabel.text = "No Address Found"
         }
         dateLabel.text = formatDate(NSDate())
+        let gestureRecognizer = UITapGestureRecognizer(target: self,action: Selector("hideKeyboard:"))
+        gestureRecognizer.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(gestureRecognizer)
+    }
+    
+    func hideKeyboard(gestureRecognizer: UIGestureRecognizer)
+    {
+        let point = gestureRecognizer.locationInView(tableView)
+        let indexPath = tableView.indexPathForRowAtPoint(point)
+        if indexPath != nil && indexPath!.section == 0 && indexPath!.row == 0
+        {
+            return
+        }
+        descriptionTextView.resignFirstResponder()
+    }
+    
+    // MARK: - UITableViewDelegate
+    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath?
+    {
+        if indexPath.section == 0 || indexPath.section == 1
+        {
+            return indexPath
+        }
+        else
+        {
+            return nil
+        }
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    {
+        if indexPath.section == 0 && indexPath.row == 0
+        {
+            descriptionTextView.becomeFirstResponder()
+        }
+    }
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    {
+        if indexPath.section == 0 && indexPath.row == 0
+        {
+            return 88
+        }
+        else if indexPath.section == 2 && indexPath.row == 2
+        {
+            addressLabel.frame.size = CGSize(width: view.bounds.size.width - 115, height: 10000)
+            addressLabel.sizeToFit()
+            addressLabel.frame.origin.x = view.bounds.size.width - addressLabel.frame.size.width - 14
+            return addressLabel.frame.size.height + 20
+        }
+        else
+        {
+            return 44
+        }
+    }
+    
+    override func viewWillLayoutSubviews()
+    {
+        super.viewWillLayoutSubviews()
+        descriptionTextView.frame.size.width = view.frame.size.width - 30
     }
     
     func stringFromPlacemark(placemark: CLPlacemark) -> String
@@ -64,5 +133,36 @@ class LocationDetailsViewController: UITableViewController
     func formatDate(date: NSDate) -> String
     {
         return dateFormatter.stringFromDate(date)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+    {
+        if segue.identifier == "PickCategory"
+        {
+            let controller = segue.destinationViewController as CategoryPickerViewController
+            controller.selectedCategoryName = categoryName
+        }
+    }
+    
+    @IBAction func categoryPickerDidPickCategory(segue: UIStoryboardSegue)
+    {
+        let controller = segue.sourceViewController as CategoryPickerViewController
+        categoryName = controller.selectedCategoryName
+        categoryLabel.text = categoryName
+    }
+}
+
+extension LocationDetailsViewController: UITextViewDelegate
+{
+    func textView(textView: UITextView, shouldChangeTextInRange
+    range: NSRange, replacementText text: String) -> Bool
+    {
+        descriptionText = (textView.text as NSString).stringByReplacingCharactersInRange(range, withString: text)
+        return true
+    }
+    
+    func textViewDidEndEditing(textView: UITextView)
+    {
+        descriptionText = textView.text
     }
 }
