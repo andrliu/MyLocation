@@ -14,6 +14,17 @@ class MapViewController: UIViewController
 {
     @IBOutlet weak var mapView: MKMapView!
     var managedObjectContext: NSManagedObjectContext!
+    {
+        didSet
+        {
+            NSNotificationCenter.defaultCenter().addObserverForName(NSManagedObjectContextObjectsDidChangeNotification, object: managedObjectContext, queue: NSOperationQueue.mainQueue()) {notification in
+                if self.isViewLoaded()
+                {
+                    self.updateLocations()
+                }
+            }
+        }
+    }
     var locations = [Location]()
     
     override func viewDidLoad()
@@ -73,7 +84,20 @@ class MapViewController: UIViewController
     
     func showLocationDetails(sender: UIButton)
     {
+        performSegueWithIdentifier("EditLocation", sender: sender)
+    }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+    {
+        if segue.identifier == "EditLocation"
+        {
+            let navigationController = segue.destinationViewController as UINavigationController
+            let controller = navigationController.topViewController as LocationDetailsViewController
+            controller.managedObjectContext = managedObjectContext
+            let button = sender as UIButton
+            let location = locations[button.tag]
+            controller.locationToEdit = location
+        }
     }
     
     @IBAction func showUser()
@@ -120,5 +144,13 @@ extension MapViewController: MKMapViewDelegate
             return annotationView
         }
         return nil
+    }
+}
+
+extension MapViewController: UINavigationBarDelegate
+{
+    func positionForBar(bar: UIBarPositioning) -> UIBarPosition
+    {
+        return .TopAttached
     }
 }

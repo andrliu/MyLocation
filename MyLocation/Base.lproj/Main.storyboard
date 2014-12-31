@@ -398,6 +398,9 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" id="bpP-io-Ajz">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="tFR-Mm-cqr" id="85C-Sp-CP7"/>
+                                </connections>
                             </mapView>
                             <navigationBar contentMode="scaleToFill" id="j6r-fv-Rz4">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
@@ -416,6 +419,9 @@
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
+                                <connections>
+                                    <outlet property="delegate" destination="tFR-Mm-cqr" id="8IG-08-7JV"/>
+                                </connections>
                             </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
