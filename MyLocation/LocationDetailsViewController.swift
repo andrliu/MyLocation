@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreLocation
-import Dispatch
+import CoreData
 
 private let dateFormatter: NSDateFormatter =
 {
@@ -26,18 +26,54 @@ class LocationDetailsViewController: UITableViewController, UITextViewDelegate
     @IBOutlet weak var longitudeLabel: UILabel!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
+    var managedObjectContext: NSManagedObjectContext!
     var coordinate = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     var placemark: CLPlacemark?
     var descriptionText = ""
     var categoryName = "No Category"
+    var date = NSDate()
+    var locationToEdit: Location?
+    {
+        didSet
+        {
+            if let location = locationToEdit
+            {
+                descriptionText = location.locationDescription
+                categoryName = location.category
+                date = location.date
+                coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude)
+                placemark = location.placemark
+            }
+        }
+    }
     
     @IBAction func done()
     {
         let hudView = HudView.hudInView(navigationController!.view, animated: true)
-        hudView.text = "Tagged"
-        let delayInSeconds = 0.6
-        let when = dispatch_time(DISPATCH_TIME_NOW, Int64(delayInSeconds * Double(NSEC_PER_SEC)))
-        dispatch_after(when, dispatch_get_main_queue(), {
+        var location: Location
+        if let temp = locationToEdit
+        {
+            hudView.text = "Updated"
+            location = temp
+        }
+        else
+        {
+            hudView.text = "Tagged"
+            location = NSEntityDescription.insertNewObjectForEntityForName("Location", inManagedObjectContext: managedObjectContext) as Location
+        }
+        location.locationDescription = descriptionText
+        location.category = categoryName
+        location.latitude = coordinate.latitude
+        location.longitude = coordinate.longitude
+        location.date = date
+        location.placemark = placemark
+        var error: NSError?
+        if !managedObjectContext.save(&error)
+        {
+            fatalCoreDataError(error)
+            return
+        }
+        afterDelay(0.6, {
             self.dismissViewControllerAnimated(true, completion: nil)
         })
     }
@@ -50,8 +86,13 @@ class LocationDetailsViewController: UITableViewController, UITextViewDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        if let location = locationToEdit
+        {
+            title = "Edit Location"
+        }
         descriptionTextView.text = descriptionText
         categoryLabel.text = categoryName
+        dateLabel.text = formatDate(date)
         latitudeLabel.text = String(format: "%.8f", coordinate.latitude)
         longitudeLabel.text = String(format: "%.8f", coordinate.longitude)
         if let placemark = placemark
