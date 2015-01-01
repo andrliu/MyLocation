@@ -18,7 +18,7 @@ private let dateFormatter: NSDateFormatter =
     return formatter
 }()
 
-class LocationDetailsViewController: UITableViewController, UITextViewDelegate
+class LocationDetailsViewController: UITableViewController
 {
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var categoryLabel: UILabel!
@@ -109,6 +109,15 @@ class LocationDetailsViewController: UITableViewController, UITextViewDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        tableView.backgroundColor = UIColor.blackColor()
+        tableView.separatorColor = UIColor(white: 1.0, alpha: 0.2)
+        tableView.indicatorStyle = .White
+        descriptionTextView.textColor = UIColor.whiteColor()
+        descriptionTextView.backgroundColor = UIColor.blackColor()
+        addPhotoLabel.textColor = UIColor.whiteColor()
+        addPhotoLabel.highlightedTextColor = addPhotoLabel.textColor
+        addressLabel.textColor = UIColor(white: 1.0, alpha: 0.4)
+        addressLabel.highlightedTextColor = addressLabel.textColor
         if let location = locationToEdit
         {
             title = "Edit Location"
@@ -137,6 +146,31 @@ class LocationDetailsViewController: UITableViewController, UITextViewDelegate
         let gestureRecognizer = UITapGestureRecognizer(target: self,action: Selector("hideKeyboard:"))
         gestureRecognizer.cancelsTouchesInView = false
         tableView.addGestureRecognizer(gestureRecognizer)
+        listenForBackgroundNotification()
+    }
+    
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
+    {
+        cell.backgroundColor = UIColor.blackColor()
+        if let textLabel = cell.textLabel
+        {
+            textLabel.textColor = UIColor.whiteColor()
+            textLabel.highlightedTextColor = textLabel.textColor
+        }
+        if let detailLabel = cell.detailTextLabel
+        {
+            detailLabel.textColor = UIColor(white: 1.0, alpha: 0.4)
+            detailLabel.highlightedTextColor = detailLabel.textColor
+        }
+        let selectionView = UIView(frame: CGRect.zeroRect)
+        selectionView.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+        cell.selectedBackgroundView = selectionView
+        if indexPath.row == 2
+        {
+            let addressLabel = cell.viewWithTag(100) as UILabel
+            addressLabel.textColor = UIColor.whiteColor()
+            addressLabel.highlightedTextColor = addressLabel.textColor
+        }
     }
     
     func hideKeyboard(gestureRecognizer: UIGestureRecognizer)
@@ -238,7 +272,14 @@ class LocationDetailsViewController: UITableViewController, UITextViewDelegate
     
     func stringFromPlacemark(placemark: CLPlacemark) -> String
     {
-        return "\(placemark.subThoroughfare) \(placemark.thoroughfare), " + "\(placemark.locality), " + "\(placemark.administrativeArea) \(placemark.postalCode)," + "\(placemark.country)"
+        var line = ""
+        line.addText(placemark.subThoroughfare)
+        line.addText(placemark.thoroughfare, withSeparator: " ")
+        line.addText(placemark.locality, withSeparator: ", ")
+        line.addText(placemark.administrativeArea, withSeparator: ", ")
+        line.addText(placemark.postalCode, withSeparator: " ")
+        line.addText(placemark.country, withSeparator: ", ")
+        return line
     }
     
     func formatDate(date: NSDate) -> String
@@ -281,8 +322,9 @@ extension LocationDetailsViewController: UIImagePickerControllerDelegate, UINavi
 {
     func takePhotoWithCamera()
     {
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .Camera
+        let imagePicker = MyImagePickerController()
+        imagePicker.view.tintColor = view.tintColor
+        imagePicker.delegate = self
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
         presentViewController(imagePicker, animated: true, completion: nil)
@@ -290,7 +332,8 @@ extension LocationDetailsViewController: UIImagePickerControllerDelegate, UINavi
     
     func choosePhotoFromLibrary()
     {
-        let imagePicker = UIImagePickerController()
+        let imagePicker = MyImagePickerController()
+        imagePicker.view.tintColor = view.tintColor
         imagePicker.sourceType = .PhotoLibrary
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
@@ -316,8 +359,7 @@ extension LocationDetailsViewController: UIImagePickerControllerDelegate, UINavi
 
 extension LocationDetailsViewController: UITextViewDelegate
 {
-    func textView(textView: UITextView, shouldChangeTextInRange
-    range: NSRange, replacementText text: String) -> Bool
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
     {
         descriptionText = (textView.text as NSString).stringByReplacingCharactersInRange(range, withString: text)
         return true
